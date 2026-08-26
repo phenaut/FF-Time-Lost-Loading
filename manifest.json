@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
   "name": "FF Time Lost Loading",
-  "version": "1.8.2",
+  "version": "1.8.2.1",
   "description": "Mesure le temps perdu par site avec plusieurs règles par domaine.",
-  "author": "Pierre Henaut",
-  "homepage_url": "https://github.com/phenaut",
+  "author": "Pierre HENAUT",
+  "homepage_url": "https://github.com/phenaut/FF-Time-Lost-Loading/",
   "permissions": [
     "storage",
     "webRequest",
@@ -55,7 +55,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "ff-time-lost-loading@pierre-henaut",
+      "id": "time-lost-loading@pierre-henaut",
       "strict_min_version": "142.0",
       "data_collection_permissions": {
         "required": [
