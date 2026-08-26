@@ -1,13 +1,6 @@
-# FF Time Lost Loading 1.7.0
+# FF Time Lost Loading 1.8.2
 
 Auteur : Pierre Henaut  
-Dépôt : https://github.com/phenaut
+GitHub : https://github.com/phenaut
 
-## Nouveautés 1.7
-
-- Le bouton **Analyser ce site** est dans le popup, entre le tableau de bord et les paramètres.
-- Le bouton d’analyse a été supprimé des paramètres.
-- L’analyse cible explicitement l’onglet depuis lequel le popup a été ouvert.
-- Une suggestion choisie crée immédiatement la règle du domaine.
-- Les modèles publics, les modes XHR / Loader CSS / Loader texte et le tri décroissant sont conservés.
-- Les exemples utilisent `example.com`.
+La version 1.8.2 ajoute un bandeau sur une ligne dans Paramètres et Tableau de bord : version, auteur et GitHub. Elle conserve le hotfix 1.8.1, le multi-règles et les corrections AMO.

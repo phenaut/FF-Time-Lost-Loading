@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "FF Time Lost Loading",
-  "version": "1.7.0",
-  "description": "Mesure le temps perdu par site avec analyse du site actif depuis le popup.",
+  "version": "1.8.2",
+  "description": "Mesure le temps perdu par site avec plusieurs règles par domaine.",
   "author": "Pierre Henaut",
   "homepage_url": "https://github.com/phenaut",
   "permissions": [
@@ -56,7 +56,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "ff-time-lost-loading@pierre-henaut",
-      "strict_min_version": "140.0",
+      "strict_min_version": "142.0",
       "data_collection_permissions": {
         "required": [
           "browsingActivity"
