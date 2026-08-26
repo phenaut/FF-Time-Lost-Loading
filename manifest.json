@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "FF Time Lost Loading",
-  "version": "1.6.0",
-  "description": "Mesure le temps perdu par site avec détection XHR, loader CSS, texte et assistant d’analyse.",
+  "version": "1.7.0",
+  "description": "Mesure le temps perdu par site avec analyse du site actif depuis le popup.",
   "author": "Pierre Henaut",
   "homepage_url": "https://github.com/phenaut",
   "permissions": [

@@ -1,5 +1,13 @@
-# FF Time Lost Loading 1.6.0
+# FF Time Lost Loading 1.7.0
 
-Auteur : Pierre Henaut. Dépôt : https://github.com/phenaut
+Auteur : Pierre Henaut  
+Dépôt : https://github.com/phenaut
 
-La version 1.6 ajoute un assistant « Analyser cette page » qui propose des règles à partir des éléments ARIA, spinners et skeletons présents dans le DOM. L’utilisateur choisit la suggestion avant création de la règle. Les modèles publics inclus couvrent : XHR générique, spinner Bootstrap, loader texte ARIA et skeleton loader. Le domaine métier d’origine est anonymisé en `example.com`. Le tableau de bord est trié par temps perdu décroissant.
+## Nouveautés 1.7
+
+- Le bouton **Analyser ce site** est dans le popup, entre le tableau de bord et les paramètres.
+- Le bouton d’analyse a été supprimé des paramètres.
+- L’analyse cible explicitement l’onglet depuis lequel le popup a été ouvert.
+- Une suggestion choisie crée immédiatement la règle du domaine.
+- Les modèles publics, les modes XHR / Loader CSS / Loader texte et le tri décroissant sont conservés.
+- Les exemples utilisent `example.com`.
