@@ -1,1 +1,56 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><link rel="stylesheet" href="style.css"></head><body><main class="settings"><h1>Paramètres</h1><div class="about-line"><span>Version 1.8.2</span><span aria-hidden="true"> | </span><span>Pierre Henaut</span><span aria-hidden="true"> | </span><a href="https://github.com/phenaut" target="_blank" rel="noopener noreferrer">github.com/phenaut</a></div><form id="form" class="card"><label class="active"><input id="enabled" type="checkbox"><span>Actif</span></label><div class="actions"><select id="template"><option value="">Ajouter un modèle public…</option><option value="xhr">Application SPA / XHR générique</option><option value="bootstrap">Bootstrap spinner CSS</option><option value="aria">Loader texte ARIA</option><option value="skeleton">Skeleton loader CSS</option><option value="business">Application métier anonymisée</option></select></div><label>Domaines suivis, un par ligne <small>Vide = tous</small><textarea id="includePatterns" rows="3"></textarea></label><label>Domaines exclus<textarea id="excludePatterns" rows="3"></textarea></label><h2>Règles par domaine</h2><div id="rules"></div><button type="button" id="add">Ajouter une règle vide</button><label>Seuil page lente (ms)<input id="slowThresholdMs" type="number"></label><button>Enregistrer</button><span id="saved"></span></form><button id="reset" class="danger">Effacer les mesures</button></main><script src="common.js"></script><script src="options.js"></script></body></html>
+﻿<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="settings">
+    <h1>Paramètres</h1>
+    <div class="about-line">
+      <span>Version 1.8.3</span>
+      <span aria-hidden="true"> | </span>
+      <span>Pierre Henaut</span>
+      <span aria-hidden="true"> | </span>
+      <a href="https://github.com/phenaut" target="_blank" rel="noopener noreferrer">github.com/phenaut</a>
+    </div>
+    <form id="form" class="card">
+      <label class="active">
+        <input id="enabled" type="checkbox">
+        <span>Actif</span>
+      </label>
+      <div class="actions">
+        <select id="template">
+          <option value="">Ajouter un modèle public…</option>
+          <option value="xhr">Application SPA / XHR générique</option>
+          <option value="xhr-action">XHR action utilisateur</option>
+          <option value="bootstrap">Bootstrap spinner CSS</option>
+          <option value="aria">Loader texte ARIA</option>
+          <option value="skeleton">Skeleton loader CSS</option>
+          <option value="business">Application métier anonymisée</option>
+        </select>
+      </div>
+      <label>
+        Domaines suivis, un par ligne <small>Vide = tous</small>
+        <textarea id="includePatterns" rows="3"></textarea>
+      </label>
+      <label>
+        Domaines exclus
+        <textarea id="excludePatterns" rows="3"></textarea>
+      </label>
+      <h2>Règles par domaine</h2>
+      <div id="rules"></div>
+      <button type="button" id="add">Ajouter une règle vide</button>
+      <label>
+        Seuil page lente (ms)
+        <input id="slowThresholdMs" type="number">
+      </label>
+      <button>Enregistrer</button>
+      <span id="saved"></span>
+    </form>
+    <button id="reset" class="danger">Effacer les mesures</button>
+  </main>
+  <script src="common.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

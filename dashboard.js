@@ -1,1 +1,39 @@
-(async()=>{let o=await api.storage.local.get(["stats","dailyStats"]),p=totals(o.stats,o.dailyStats);global.replaceChildren(...[["Aujourd'hui, tous sites",p.today],["Ce mois, tous sites",p.month],["Cette année, tous sites",p.year]].map(([l,v])=>{let d=el("div");d.append(el("span",l),el("b",fd(v)));return d}));let a=[];for(let[h,ms]of Object.entries(o.stats||{}))for(let[m,x]of Object.entries(ms))a.push({h,m,...x});a.sort((x,y)=>y.totalMs-x.totalMs||x.h.localeCompare(y.h));rows.replaceChildren(...a.map(x=>{let tr=el("tr");for(let v of[x.h,x.m,x.count,fd(x.totalMs),fm(x.totalMs/x.count),fm(x.minMs||0),fm(x.maxMs),Object.keys(x.methods||{}).join(", ")])tr.append(el("td",String(v)));return tr}))})();
+﻿(async () => {
+  let o = await api.storage.local.get(["stats", "dailyStats"]);
+  let p = totals(o.stats, o.dailyStats);
+
+  global.replaceChildren(...[
+    ["Aujourd'hui, tous sites", p.today],
+    ["Ce mois, tous sites",     p.month],
+    ["Cette année, tous sites", p.year]
+  ].map(([l, v]) => {
+    let d = el("div");
+    d.append(el("span", l), el("b", fd(v)));
+    return d;
+  }));
+
+  let a = [];
+  for (let [h, ms] of Object.entries(o.stats || {})) {
+    for (let [m, x] of Object.entries(ms)) {
+      a.push({ h, m, ...x });
+    }
+  }
+  a.sort((x, y) => y.totalMs - x.totalMs || x.h.localeCompare(y.h));
+
+  rows.replaceChildren(...a.map(x => {
+    let tr = el("tr");
+    for (let v of [
+      x.h,
+      x.m,
+      x.count,
+      fd(x.totalMs),
+      fm(x.totalMs / x.count),
+      fm(x.minMs || 0),
+      fm(x.maxMs),
+      Object.keys(x.methods || {}).join(", ")
+    ]) {
+      tr.append(el("td", String(v)));
+    }
+    return tr;
+  }));
+})();
