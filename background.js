@@ -122,7 +122,7 @@ async function arm(tab) {
   if (!t || !t.mainDone || t.active.size) return;
   clear(t);
   let s = await cfg();
-    t.timer = setTimeout(async () => {
+  t.timer = setTimeout(async () => {
     let q = X.get(tab);
     if (!q || q.active.size) return;
     X.delete(tab);
@@ -135,10 +135,11 @@ async function arm(tab) {
 api.webRequest.onBeforeRequest.addListener(async d => {
   if (d.tabId < 0) return;
   let s = await cfg();
-  if (d.type === "main_frame") {
+    if (d.type === "main_frame") {
     let h = host(d.url, s.stripWww);
     clear(X.get(d.tabId));
     X.delete(d.tabId);
+    badgeStop(d.tabId);
     let rules = s.siteRules[h] || [];
     if (!allow(h, s) || (rules.length && !rules.some(r => r.mode === "xhr"))) return;
     const entry = {
@@ -176,17 +177,26 @@ api.webRequest.onBeforeRequest.addListener(async d => {
     }
   }
 
-  let t = X.get(d.tabId);
+    let t = X.get(d.tabId);
   if (!t) return;
   clear(t);
   t.active.add(d.requestId);
   Q.set(d.requestId, d.tabId);
+  // Timeout par requete : si elle ne se termine pas en 60s, on la retire
+  setTimeout(() => {
+    if (!Q.has(d.requestId)) return;
+    Q.delete(d.requestId);
+    let tx = X.get(d.tabId);
+    if (!tx) return;
+    tx.active.delete(d.requestId);
+    arm(d.tabId);
+  }, 60000);
 }, { urls: ["<all_urls>"], types: ["main_frame", "xmlhttprequest"] });
 
 function done(d, e) {
-  if (d.type === "main_frame") {
+    if (d.type === "main_frame") {
     let t = X.get(d.tabId);
-        if (!t) return;
+    if (!t) return;
     if (t.mainId !== d.requestId) t.mainId = d.requestId; // redirection : on accepte le nouveau requestId
     t.mainDone = true;
     t.last = d.timeStamp;
