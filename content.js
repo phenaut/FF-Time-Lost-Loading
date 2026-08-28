@@ -1,4 +1,66 @@
 ﻿let started = false;
+const slowRequests = [];
+
+(function patchXHR() {
+  const OrigXHR = XMLHttpRequest;
+  function PatchedXHR() {
+    const xhr  = new OrigXHR();
+    let method = 'GET';
+    let url    = '';
+    let t0     = 0;
+    const origOpen = xhr.open.bind(xhr);
+    const origSend = xhr.send.bind(xhr);
+    xhr.open = function(m, u, ...rest) {
+      method = (m || '').toUpperCase();
+      url    = u || '';
+      return origOpen(m, u, ...rest);
+    };
+    xhr.send = function(...args) {
+      if (method === 'POST') {
+        t0 = Date.now();
+        xhr.addEventListener('loadend', () => {
+          const ms = Date.now() - t0;
+          if (ms >= 500) {
+            try {
+              const h = new URL(url, location.href).hostname.toLowerCase().replace(/^www\./, '');
+              if (!slowRequests.some(r => r.url === url)) {
+                slowRequests.push({ url, host: h, ms });
+              }
+            } catch {}
+          }
+        });
+      }
+      return origSend(...args);
+    };
+    return xhr;
+  }
+  PatchedXHR.prototype = OrigXHR.prototype;
+  window.XMLHttpRequest = PatchedXHR;
+})();
+
+(function patchFetch() {
+  const origFetch = window.fetch.bind(window);
+  window.fetch = function(input, init, ...rest) {
+    const method = ((init?.method) || 'GET').toUpperCase();
+    const url    = typeof input === 'string' ? input : input?.url || '';
+    if (method === 'POST') {
+      const t0 = Date.now();
+      return origFetch(input, init, ...rest).then(res => {
+        const ms = Date.now() - t0;
+        if (ms >= 500) {
+          try {
+            const h = new URL(url, location.href).hostname.toLowerCase().replace(/^www\./, '');
+            if (!slowRequests.some(r => r.url === url)) {
+              slowRequests.push({ url, host: h, ms });
+            }
+          } catch {}
+        }
+        return res;
+      });
+    }
+    return origFetch(input, init, ...rest);
+  };
+})();
 
 async function monitor() {
   if (started) return;
@@ -88,7 +150,7 @@ function analyze() {
     '[aria-busy="true"]'
   ]) {
     if (document.querySelector(s)) {
-      add('loader', s, s.includes('aria-busy') ? '' : 'd-none', 'Loader CSS détecté');
+      add('loader', s, s.includes('aria-busy') ? '' : 'd-none', 'Loader CSS detecte');
     }
   }
 
@@ -102,35 +164,33 @@ function analyze() {
     for (let e of document.querySelectorAll(s)) {
       let m = (e.textContent || '').match(/loading|chargement|please wait|patientez/i);
       if (m) {
-        add('text', s, m[0], 'Loader texte détecté');
+        add('text', s, m[0], 'Loader texte detecte');
         break;
       }
     }
   }
 
-    // Détection xhr-action : requêtes POST lentes interceptées
-    if (slowRequests.length > 0) {
-      const best = slowRequests.reduce((a, b) => b.ms > a.ms ? b : a);
-      add('xhr-action', '', '', `Requête POST lente détectée (${best.ms} ms) → mesure XHR par action utilisateur`);
-    } else {
-      // Fallback : formulaires de recherche et boutons d'action visibles
-      const actionSelectors = [
-        'form[action]',
-        'form input[type="search"]',
-        'input[type="search"]',
-        '[role="search"]',
-        'button[type="submit"]',
-        '.search-form',
-        '.search-bar',
-        '.search-box',
-        '#search',
-        '#searchForm',
-        '[data-search]'
-      ];
-      if (actionSelectors.some(s => document.querySelector(s))) {
-        add('xhr-action', '', '', 'Formulaire / interaction détecté → mesure XHR par action utilisateur');
-      }
+  if (slowRequests.length > 0) {
+    const best = slowRequests.reduce((a, b) => b.ms > a.ms ? b : a);
+    add('xhr-action', '', '', 'Requete POST lente detectee (' + best.ms + ' ms) - mesure XHR par action utilisateur');
+  } else {
+    const actionSelectors = [
+      'form[action]',
+      'form input[type="search"]',
+      'input[type="search"]',
+      '[role="search"]',
+      'button[type="submit"]',
+      '.search-form',
+      '.search-bar',
+      '.search-box',
+      '#search',
+      '#searchForm',
+      '[data-search]'
+    ];
+    if (actionSelectors.some(s => document.querySelector(s))) {
+      add('xhr-action', '', '', 'Formulaire / interaction detecte - mesure XHR par action utilisateur');
     }
+  }
 
   return {
     host: location.hostname.toLowerCase().replace(/^www\./, ''),

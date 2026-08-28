@@ -122,8 +122,8 @@ async function arm(tab) {
   if (!t || !t.mainDone || t.active.size) return;
   clear(t);
   let s = await cfg();
-  t.timer = setTimeout(async () => {
-        let q = X.get(tab);
+    t.timer = setTimeout(async () => {
+    let q = X.get(tab);
     if (!q || q.active.size) return;
     X.delete(tab);
     if (q.maxTimer) clearTimeout(q.maxTimer);
@@ -186,9 +186,8 @@ api.webRequest.onBeforeRequest.addListener(async d => {
 function done(d, e) {
   if (d.type === "main_frame") {
     let t = X.get(d.tabId);
-    if (!t) return;
-    // Met à jour le mainId en cas de redirection
-    if (t.mainId !== d.requestId) t.mainId = d.requestId;
+        if (!t) return;
+    if (t.mainId !== d.requestId) t.mainId = d.requestId; // redirection : on accepte le nouveau requestId
     t.mainDone = true;
     t.last = d.timeStamp;
     t.error ||= e;
@@ -226,8 +225,8 @@ api.runtime.onMessage.addListener(async (m, sender) => {
     let s = await cfg();
     let h = host(m.url, s.stripWww);
     let rules = (s.siteRules[h] || []).filter(r => ["loader", "text"].includes(r.mode));
-    return { enabled: allow(h, s) && rules.length, host: h, rules };
-    }
+        return { enabled: allow(h, s) && rules.length, host: h, rules };
+  }
   if (m.type === "visualStart" && !V.has(sender.tab.id)) {
     V.set(sender.tab.id, { host: m.host, start: m.time });
     badgeStart(sender.tab.id);
