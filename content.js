@@ -1,1 +1,147 @@
-let started=false;async function monitor(){if(started)return;let c=await browser.runtime.sendMessage({type:"config",url:location.href});if(!c?.enabled)return;started=true;let session=false,endTimer,maxTimer;function active(r){try{let es=[...document.querySelectorAll(r.selector||"")];if(r.mode==="text")return es.some(e=>{let a=(e.textContent||"").replace(/\s+/g," ").trim(),b=(r.text||"").trim();if(!r.caseSensitive){a=a.toLowerCase();b=b.toLowerCase()}return b&&a.includes(b)});return es.some(e=>e.isConnected&&!e.classList.contains(r.hiddenClass||"ng-hide")&&e.getAttribute("aria-hidden")!=="true"&&getComputedStyle(e).display!=="none"&&getComputedStyle(e).visibility!=="hidden")}catch{return false}}function stop(){if(!session)return;session=false;clearTimeout(maxTimer);browser.runtime.sendMessage({type:"visualEnd",host:c.host,time:Date.now()})}function check(){let any=c.rules.some(active);if(any&&!session){clearTimeout(endTimer);session=true;browser.runtime.sendMessage({type:"visualStart",host:c.host,time:Date.now()});maxTimer=setTimeout(stop,Math.max(...c.rules.map(r=>+r.maxMs||120000)))}else if(!any&&session){endTimer=setTimeout(()=>{if(!c.rules.some(active))stop()},Math.max(...c.rules.map(r=>+r.debounceMs||300)))}}new MutationObserver(check).observe(document,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:["class","style","aria-hidden","aria-busy"]});check()}function analyze(){let out=[],seen=new Set(),add=(mode,selector,value,label)=>{let k=mode+selector+value;if(!seen.has(k)){seen.add(k);out.push({mode,selector,value,label})}};for(let s of[".spinner-border",".spinner-grow",".spinner",".loader",".loading",".loading-spinner",".skeleton",".skeleton-loader","[aria-busy=\"true\"]"])if(document.querySelector(s))add("loader",s,s.includes("aria-busy")?"":"d-none","Loader CSS détecté");for(let s of["[role=\"status\"]","[role=\"alert\"]",".visually-hidden",".sr-only",".mx-aria-only"])for(let e of document.querySelectorAll(s)){let m=(e.textContent||"").match(/loading|chargement|please wait|patientez/i);if(m){add("text",s,m[0],"Loader texte détecté");break}}return{host:location.hostname.toLowerCase().replace(/^www\./,""),candidates:out}}browser.runtime.onMessage.addListener(m=>m.type==="analyzePage"?Promise.resolve(analyze()):undefined);document.readyState==="loading"?document.addEventListener("DOMContentLoaded",monitor,{once:true}):monitor();
+﻿let started = false;
+
+async function monitor() {
+  if (started) return;
+  let c = await browser.runtime.sendMessage({ type: 'config', url: location.href });
+  if (!c?.enabled) return;
+  started = true;
+
+  let session = false;
+  let endTimer;
+  let maxTimer;
+
+  function active(r) {
+    try {
+      let es = [...document.querySelectorAll(r.selector || '')];
+      if (r.mode === 'text') {
+        return es.some(e => {
+          let a = (e.textContent || '').replace(/\s+/g, ' ').trim();
+          let b = (r.text || '').trim();
+          if (!r.caseSensitive) { a = a.toLowerCase(); b = b.toLowerCase(); }
+          return b && a.includes(b);
+        });
+      }
+      return es.some(e =>
+        e.isConnected &&
+        !e.classList.contains(r.hiddenClass || 'ng-hide') &&
+        e.getAttribute('aria-hidden') !== 'true' &&
+        getComputedStyle(e).display !== 'none' &&
+        getComputedStyle(e).visibility !== 'hidden'
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  function stop() {
+    if (!session) return;
+    session = false;
+    clearTimeout(maxTimer);
+    browser.runtime.sendMessage({ type: 'visualEnd', host: c.host, time: Date.now() });
+  }
+
+  function check() {
+    let any = c.rules.some(active);
+    if (any && !session) {
+      clearTimeout(endTimer);
+      session = true;
+      browser.runtime.sendMessage({ type: 'visualStart', host: c.host, time: Date.now() });
+      maxTimer = setTimeout(stop, Math.max(...c.rules.map(r => +r.maxMs || 120000)));
+    } else if (!any && session) {
+      endTimer = setTimeout(() => {
+        if (!c.rules.some(active)) stop();
+      }, Math.max(...c.rules.map(r => +r.debounceMs || 300)));
+    }
+  }
+
+  new MutationObserver(check).observe(document, {
+    subtree: true,
+    childList: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ['class', 'style', 'aria-hidden', 'aria-busy']
+  });
+  check();
+}
+
+function analyze() {
+  let out  = [];
+  let seen = new Set();
+
+  const add = (mode, selector, value, label) => {
+    let k = mode + selector + value;
+    if (!seen.has(k)) {
+      seen.add(k);
+      out.push({ mode, selector, value, label });
+    }
+  };
+
+  for (let s of [
+    '.spinner-border',
+    '.spinner-grow',
+    '.spinner',
+    '.loader',
+    '.loading',
+    '.loading-spinner',
+    '.skeleton',
+    '.skeleton-loader',
+    '[aria-busy="true"]'
+  ]) {
+    if (document.querySelector(s)) {
+      add('loader', s, s.includes('aria-busy') ? '' : 'd-none', 'Loader CSS détecté');
+    }
+  }
+
+  for (let s of [
+    '[role="status"]',
+    '[role="alert"]',
+    '.visually-hidden',
+    '.sr-only',
+    '.mx-aria-only'
+  ]) {
+    for (let e of document.querySelectorAll(s)) {
+      let m = (e.textContent || '').match(/loading|chargement|please wait|patientez/i);
+      if (m) {
+        add('text', s, m[0], 'Loader texte détecté');
+        break;
+      }
+    }
+  }
+
+    // Détection xhr-action : requêtes POST lentes interceptées
+    if (slowRequests.length > 0) {
+      const best = slowRequests.reduce((a, b) => b.ms > a.ms ? b : a);
+      add('xhr-action', '', '', `Requête POST lente détectée (${best.ms} ms) → mesure XHR par action utilisateur`);
+    } else {
+      // Fallback : formulaires de recherche et boutons d'action visibles
+      const actionSelectors = [
+        'form[action]',
+        'form input[type="search"]',
+        'input[type="search"]',
+        '[role="search"]',
+        'button[type="submit"]',
+        '.search-form',
+        '.search-bar',
+        '.search-box',
+        '#search',
+        '#searchForm',
+        '[data-search]'
+      ];
+      if (actionSelectors.some(s => document.querySelector(s))) {
+        add('xhr-action', '', '', 'Formulaire / interaction détecté → mesure XHR par action utilisateur');
+      }
+    }
+
+  return {
+    host: location.hostname.toLowerCase().replace(/^www\./, ''),
+    candidates: out
+  };
+}
+
+browser.runtime.onMessage.addListener(m =>
+  m.type === 'analyzePage' ? Promise.resolve(analyze()) : undefined
+);
+
+document.readyState === 'loading'
+  ? document.addEventListener('DOMContentLoaded', monitor, { once: true })
+  : monitor();
