@@ -4,7 +4,7 @@
 
 
 
-# FF Time Lost Loading 1.8.3
+# FF Time Lost Loading 1.8.3.16
 
 **Auteur :** Pierre Henaut  
 **GitHub :** https://github.com/phenaut/FF-Time-Lost-Loading  
@@ -213,6 +213,12 @@ L'analyseur (bouton **"Analyser ce site"** dans le popup) inspecte la page coura
 
 > ⚠️ **Pour détecter les requêtes POST lentes**, effectuez d'abord une recherche ou une interaction sur le site, **puis** cliquez sur "Analyser ce site".
 
+### Résultats des suggestions
+
+- Les suggestions détectées s'affichent sous forme de cases à cocher, **non cochées par défaut**
+- Les mots **load** et **charge** (quelle que soit la casse) sont mis en **gras** dans les descriptions
+- Cochez les règles souhaitées puis cliquez sur **"Ajouter les règles sélectionnées"**
+
 ---
 
 ## Règles multiples par domaine
@@ -252,6 +258,12 @@ Chaque mesure enregistre :
 ---
 
 ## Historique des versions
+
+### 1.8.3.16
+- Suggestions de l'analyseur non cochées par défaut
+- Mise en gras des mots `load` et `charge` (insensible à la casse) dans les descriptions de suggestions
+- Correction sécurité : suppression de `innerHTML` dynamique remplacé par manipulation DOM native (conformité AMO)
+- Correction : chemins des icônes dans l'archive XPI avec séparateur `/` (conformité AMO)
 
 ### 1.8.3
 - Tri alphabétique des domaines dans l'écran des paramètres
