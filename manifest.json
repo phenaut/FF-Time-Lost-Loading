@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "FF Time Lost Loading",
-  "version": "1.8.3.16",
+  "version": "1.8.4",
   "description": "Mesure le temps perdu par site avec plusieurs règles par domaine.",
   "author": "Pierre HENAUT",
   "homepage_url": "https://github.com/phenaut/FF-Time-Lost-Loading/",

@@ -1,9 +1,3 @@
-
-
-
-
-
-
 # FF Time Lost Loading 1.8.3.16
 
 **Auteur :** Pierre Henaut  
