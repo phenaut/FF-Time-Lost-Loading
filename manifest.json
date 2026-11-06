@@ -1,14 +1,13 @@
 {
   "manifest_version": 3,
   "name": "FF Time Lost Loading",
-  "version": "1.8.4",
-  "description": "Mesure le temps perdu par site avec plusieurs règles par domaine.",
+  "version": "1.9.2",
+  "description": "Mesure le temps perdu en attente de chargement sur les sites web via l'observation du trafic XHR.",
   "author": "Pierre HENAUT",
   "homepage_url": "https://github.com/phenaut/FF-Time-Lost-Loading/",
   "permissions": [
     "storage",
     "webRequest",
-    "activeTab",
     "tabs"
   ],
   "host_permissions": [
@@ -19,18 +18,6 @@
       "background.js"
     ]
   },
-  "content_scripts": [
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "content.js"
-      ],
-      "run_at": "document_start",
-      "all_frames": false
-    }
-  ],
   "action": {
     "default_title": "FF Time Lost Loading",
     "default_popup": "popup.html",
@@ -55,7 +42,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "time-lost-loading-xpi@pierre-henaut",
+      "id": "time-lost-loading@pierre-henaut",
       "strict_min_version": "142.0",
       "data_collection_permissions": {
         "required": [
