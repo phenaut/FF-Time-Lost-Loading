@@ -1,4 +1,4 @@
-# FF Time Lost Loading 1.8.3.16
+# FF Time Lost Loading 1.9.2
 
 **Auteur :** Pierre Henaut  
 **GitHub :** https://github.com/phenaut/FF-Time-Lost-Loading  
